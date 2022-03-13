@@ -1,3 +1,7 @@
+*{
+  box-sizing: border-box;
+  color:#565656
+}
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

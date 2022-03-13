@@ -1,0 +1,35 @@
+.friend-card{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid rgba(86,86,86,0.45);
+    border-top: none;
+    padding: 12px;
+}
+.friend-name{
+    margin: 0;
+    color: #565656;
+    font-weight: 600;
+    font-size: 16px;
+}
+.action-section{
+    display: flex;
+}
+.btn {
+    background:#fff;
+    border: 1px solid #B4B4B4;
+    border-radius: 3px;
+    padding: 4px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn img{
+    width: 14px;
+}
+/* .star-btn{
+
+} */
+.delete-btn{
+    margin-left: 12px;
+}
