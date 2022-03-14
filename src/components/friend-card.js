@@ -3,6 +3,7 @@ import '../styles/friend-card.css';
 import StarIcon from './../assets/star.svg';
 import StarFilledIcon from './../assets/star-filled.svg';
 import TrashIcon from './../assets/trash.svg';
+import PropTypes from 'prop-types';
 
 const FriendCard = ({friend,starCallback,removeCallback,index})=>{
     return(
@@ -25,5 +26,10 @@ const FriendCard = ({friend,starCallback,removeCallback,index})=>{
         </div>
     )
 }
-
+FriendCard.propTypes = {
+    friend: PropTypes.object,
+    starCallback: PropTypes.func,
+    removeCallback:PropTypes.func,
+    index:PropTypes.number
+}
 export default FriendCard;

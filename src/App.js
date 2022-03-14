@@ -1,10 +1,20 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import './App.css';
 import FriendCard from './components/friend-card';
 import Arrow from './assets/arrow.svg';
+import idgenerator from './utils/idgenerator';
 
 const ROWS_PER_PAGE = 4;
-
+const DEBOUNCE_TIME = 400;
+const THROTTLE_VAL = 3;
+const DEBOUNCE_THROTTLE_STARTS_AFTER = 1000;
+/**
+ * 
+ * below thousand users we don't need debounce and throttling,
+ * because it is frontend search, we might not even need it on 1000 users as well
+ * so one can change this limit as per their need.
+ * 
+ */
 function App() {
   const [friendList,setFriendList] = useState([]);
   const [filteredFriendList,setfilteredList] = useState([]);
@@ -42,26 +52,49 @@ function App() {
         //do nothing
     }
   }
+
   const addFriend = (e)=>{
+    //Any text that can be entered can be saved as people sometimes do use
+    //special characters (sometime for nick names) and numbers in names
     e.preventDefault();
     if(!filteredFriendList.length){
       let cfriendList = [...friendList];
-      cfriendList.push({name:searchVal,is_starred:false});
+      cfriendList.push({name:searchVal,is_starred:false,id:idgenerator()});
       setFriendList(cfriendList);
       setSearchVal("");
       setfilteredList(cfriendList);
     }
   }
+  
+  useEffect(()=>{
+    //debounce and throttling effect, depends on searched value
+    if(friendList.length<DEBOUNCE_THROTTLE_STARTS_AFTER){
+      return ()=>{}
+    }
+    const timeout = setTimeout(()=>{
+      if(!searchVal.length || searchVal.length>=THROTTLE_VAL){
+        setfilteredList(filterfriendList(searchVal));
+      }
+    },DEBOUNCE_TIME)
+    return ()=>{
+      clearTimeout(timeout)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[searchVal])
+
   const search = (val)=>{
     setSearchVal(val);
-    setfilteredList(filterfriendList(val));
+    if(friendList.length<DEBOUNCE_THROTTLE_STARTS_AFTER){
+      setfilteredList(filterfriendList(val));
+    }
   }
+
   const moveStarredOnTop = ()=>{
     let cfriendList = [...friendList];
     let cfiltereList = [...filteredFriendList];
-    setFriendList(favouritiesOnTop(cfriendList));
-    setfilteredList(favouritiesOnTop(cfiltereList));
-    setStarFilter(!starFilter)
+    setFriendList(starFilter?sortById(cfriendList):favouritiesOnTop(cfriendList));
+    setfilteredList(starFilter?sortById(cfiltereList):favouritiesOnTop(cfiltereList));
+    setStarFilter(!starFilter);
   }
 
   const next = ()=>{
@@ -83,6 +116,7 @@ function App() {
       return friend.name.toLowerCase().includes(val.toLowerCase());
     })
   }
+
   const favouritiesOnTop = (friendsList)=>{
     let cfriendsList = [...friendsList];
     cfriendsList =  cfriendsList.sort((f1,f2)=>{
@@ -98,6 +132,22 @@ function App() {
     return cfriendsList
 
   }
+
+  const sortById = (friendsList)=>{
+    let cfriendsList = [...friendsList];
+    cfriendsList =  cfriendsList.sort((f1,f2)=>{
+      if (f1.id > f2.id){
+        return 1;
+      }
+      else if(f1.id < f2.id){
+        return -1
+      }
+      return 0;
+    })
+
+    return cfriendsList
+  }
+
   return (
     <div className="App">
       <div className='container'>
